@@ -55,3 +55,7 @@ spec:
             value: "account.global-bank.svc.cluster.local/account"
           - name: feign.url-rule-service
             value: "rules.global-bank.svc.cluster.local/rules"
+          - name: spring.jpa.hibernate.ddl-auto
+            value: "create"  
+          - name: spring.jpa.generate-ddl
+            value: "true"  
