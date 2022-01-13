@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-//@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")
 public class TransactionRestController {
 
 	public static final String METHOD_FOR_MAKETRANSFER = "AccountFallbackForTransfer";
