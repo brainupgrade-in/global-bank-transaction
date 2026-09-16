@@ -1,9 +1,7 @@
 package in.brainupgrade.transactionservice.controller;
 
 import java.util.List;
-
-import javax.validation.Valid;
-
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
 import in.brainupgrade.transactionservice.feign.AccountFeign;
 import in.brainupgrade.transactionservice.feign.RulesFeign;
 import in.brainupgrade.transactionservice.models.Transaction;
@@ -22,44 +19,35 @@ import in.brainupgrade.transactionservice.repository.TransactionRepository;
 import in.brainupgrade.transactionservice.service.TransactionServiceInterface;
 import in.brainupgrade.transactionservice.util.AccountInput;
 import in.brainupgrade.transactionservice.util.TransactionInput;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
-@Slf4j
 @CrossOrigin(origins = "*")
 public class TransactionRestController {
-
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TransactionRestController.class);
 	public static final String METHOD_FOR_MAKETRANSFER = "AccountFallbackForTransfer";
 	public static final String METHOD_FOR_MAKEWITHDRAW = "AccountFallbackForWithdraw";
 	public static final String METHOD_FOR_MAKEDEPOSIT = "AccountFallbackForDeposit";
-
 	@Autowired
 	AccountFeign accountFeign;
-
 	@Autowired
 	RulesFeign rulesFeign;
-
 	@Autowired
 	TransactionRepository transRepo;
-
 	@Autowired
 	TransactionServiceInterface transactionService;
 
 	/**
 	 * MakeTransfer method Transfers amount from One account to another
 	 */
-	@PostMapping(value = "/transactions")
-	@ApiOperation(value = "Transfer amount ", notes = "Transfers amount from source acc to target acc ")
-	public boolean makeTransfer(
-			@ApiParam(value = "token for authentication passed in header", required = true) @RequestHeader("Authorization") String token,
-			@ApiParam(value = "details required for transfer", required = true) @Valid @RequestBody TransactionInput transactionInput) {
+	@PostMapping("/transactions")
+	@Operation(summary = "Transfer amount ", description = "Transfers amount from source acc to target acc ")
+	public boolean makeTransfer(@Parameter(description = "token for authentication passed in header", required = true) @RequestHeader("Authorization") String token, @Parameter(description = "details required for transfer", required = true) @Valid @RequestBody TransactionInput transactionInput) {
 		log.info("inside transaction method");
 		log.info(transactionInput.toString());
 		if (transactionInput != null) {
 			boolean isComplete = transactionService.makeTransfer(token, transactionInput);
-
 			return isComplete;
 		} else {
 			return false;
@@ -81,11 +69,9 @@ public class TransactionRestController {
 	 * @param accId
 	 * @return
 	 */
-	@ApiOperation(value = "Get all transactions", notes = "Provide the id of the customer whose all transactions is to be retrieved")
-	@GetMapping(value = "/getAllTransByAccId/{id}")
-	public List<Transaction> getTransactionsByAccId(
-			@ApiParam(value = "token passed in header for authentication", required = true) @RequestHeader("Authorization") String token,
-			@ApiParam(value = "id of customer ", required = true) @PathVariable("id") long accId) {
+	@Operation(summary = "Get all transactions", description = "Provide the id of the customer whose all transactions is to be retrieved")
+	@GetMapping("/getAllTransByAccId/{id}")
+	public List<Transaction> getTransactionsByAccId(@Parameter(description = "token passed in header for authentication", required = true) @RequestHeader("Authorization") String token, @Parameter(description = "id of customer ", required = true) @PathVariable("id") long accId) {
 		List<Transaction> slist = transRepo.findBySourceAccountIdOrTargetAccountIdOrderByInitiationDate(accId, accId);
 		return slist;
 	}
@@ -97,20 +83,16 @@ public class TransactionRestController {
 	 * @param accountInput
 	 * @return
 	 */
-	@PostMapping(value = "/withdraw")
-	@ApiOperation(value = "Withdraw Amount ", notes = "To withdraw cash from the account")
-	public boolean makeWithdraw(
-			@ApiParam(value = "token for authentication passed in header", required = true) @RequestHeader("Authorization") String token,
-			@ApiParam(value = "Account Details", required = true) @Valid @RequestBody AccountInput accountInput) {
+	@PostMapping("/withdraw")
+	@Operation(summary = "Withdraw Amount ", description = "To withdraw cash from the account")
+	public boolean makeWithdraw(@Parameter(description = "token for authentication passed in header", required = true) @RequestHeader("Authorization") String token, @Parameter(description = "Account Details", required = true) @Valid @RequestBody AccountInput accountInput) {
 		transactionService.makeWithdraw(token, accountInput);
 		return true;
 	}
 
-	@PostMapping(value = "/servicecharge")
-	@ApiOperation(value = "Service Charge ", notes = "Service Charge to be cut for not maintaining the minimum balance ")
-	public boolean makeServiceCharges(
-			@ApiParam(value = "token for authentication passed in header", required = true) @RequestHeader("Authorization") String token,
-			@ApiParam(value = "Account Details", required = true) @Valid @RequestBody AccountInput accountInput) {
+	@PostMapping("/servicecharge")
+	@Operation(summary = "Service Charge ", description = "Service Charge to be cut for not maintaining the minimum balance ")
+	public boolean makeServiceCharges(@Parameter(description = "token for authentication passed in header", required = true) @RequestHeader("Authorization") String token, @Parameter(description = "Account Details", required = true) @Valid @RequestBody AccountInput accountInput) {
 		transactionService.makeServiceCharges(token, accountInput);
 		return true;
 	}
@@ -130,11 +112,9 @@ public class TransactionRestController {
 	 * @param accountInput
 	 * @return
 	 */
-	@PostMapping(value = "/deposit")
-	@ApiOperation(value = "Deposit Amount ", notes = "To deposit cash in the account")
-	public ResponseEntity<?> makeDeposit(
-			@ApiParam(value = "token for authentication passed in header", required = true) @RequestHeader("Authorization") String token,
-			@ApiParam(value = "Account details", required = true) @Valid @RequestBody AccountInput accountInput) {
+	@PostMapping("/deposit")
+	@Operation(summary = "Deposit Amount ", description = "To deposit cash in the account")
+	public ResponseEntity<?> makeDeposit(@Parameter(description = "token for authentication passed in header", required = true) @RequestHeader("Authorization") String token, @Parameter(description = "Account details", required = true) @Valid @RequestBody AccountInput accountInput) {
 		transactionService.makeDeposit(token, accountInput);
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
@@ -146,5 +126,4 @@ public class TransactionRestController {
 		log.error("Rules Microservice is DOWN!");
 		return new ResponseEntity<>(false, HttpStatus.GATEWAY_TIMEOUT);
 	}
-
 }

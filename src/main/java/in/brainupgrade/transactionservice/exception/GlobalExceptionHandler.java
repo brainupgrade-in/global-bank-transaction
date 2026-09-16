@@ -1,6 +1,5 @@
 package in.brainupgrade.transactionservice.exception;
 
-
 import java.net.ConnectException;
 import java.time.LocalDateTime;
 

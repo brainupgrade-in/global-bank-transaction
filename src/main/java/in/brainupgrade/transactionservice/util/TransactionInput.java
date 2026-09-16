@@ -1,31 +1,60 @@
 package in.brainupgrade.transactionservice.util;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 public class TransactionInput {
-
 	private AccountInput sourceAccount;
-
 	private AccountInput targetAccount;
-
 	@Positive(message = "Transfer amount must be positive")
 	@Min(value = 1, message = "Amount must be larger than 1")
 	private double amount;
-
 	private String reference;
 
-	
+	public void setSourceAccount(final AccountInput sourceAccount) {
+		this.sourceAccount = sourceAccount;
+	}
+
+	public void setTargetAccount(final AccountInput targetAccount) {
+		this.targetAccount = targetAccount;
+	}
+
+	public void setAmount(final double amount) {
+		this.amount = amount;
+	}
+
+	public void setReference(final String reference) {
+		this.reference = reference;
+	}
+
+	public AccountInput getSourceAccount() {
+		return this.sourceAccount;
+	}
+
+	public AccountInput getTargetAccount() {
+		return this.targetAccount;
+	}
+
+	public double getAmount() {
+		return this.amount;
+	}
+
+	public String getReference() {
+		return this.reference;
+	}
+
+	public TransactionInput(final AccountInput sourceAccount, final AccountInput targetAccount, final double amount, final String reference) {
+		this.sourceAccount = sourceAccount;
+		this.targetAccount = targetAccount;
+		this.amount = amount;
+		this.reference = reference;
+	}
+
+	public TransactionInput() {
+	}
+
+	@java.lang.Override
+	public java.lang.String toString() {
+		return "TransactionInput(sourceAccount=" + this.getSourceAccount() + ", targetAccount=" + this.getTargetAccount() + ", amount=" + this.getAmount() + ", reference=" + this.getReference() + ")";
+	}
 }
