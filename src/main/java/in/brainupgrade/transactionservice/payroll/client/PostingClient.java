@@ -1,5 +1,6 @@
 package in.brainupgrade.transactionservice.payroll.client;
 
+import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -26,5 +27,16 @@ public class PostingClient {
             throw new PostingClientException(
                     "Posting " + request.getClientReference() + " was rejected by global-bank-account", ex);
         }
+    }
+
+    /**
+     * Asks the posting service for the settlement date that applies to a value date,
+     * so this service does not have to model the settlement calendar itself.
+     */
+    public LocalDate resolveSettlementDate(LocalDate valueDate) {
+        return restClient.get()
+                .uri("/api/v1/settlement-date?valueDate={valueDate}", valueDate)
+                .retrieve()
+                .body(LocalDate.class);
     }
 }

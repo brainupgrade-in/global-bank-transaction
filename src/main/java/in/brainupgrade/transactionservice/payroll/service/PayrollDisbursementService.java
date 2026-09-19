@@ -32,6 +32,8 @@ public class PayrollDisbursementService {
         int accepted = 0;
         List<String> rejected = new ArrayList<>();
 
+        LocalDate settlementDate = postingClient.resolveSettlementDate(valueDate);
+
         for (PayrollItem item : items) {
             String clientReference = batchId + "-" + item.getReference();
             PostingRequest request = new PostingRequest(
@@ -40,6 +42,7 @@ public class PayrollDisbursementService {
                     item.getEmployeeAccountId(),
                     item.getAmountMinor(),
                     valueDate,
+                    settlementDate,
                     "Payroll " + batchId);
             try {
                 postingClient.post(request);

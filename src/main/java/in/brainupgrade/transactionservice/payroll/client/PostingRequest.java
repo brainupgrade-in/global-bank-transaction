@@ -13,15 +13,18 @@ public class PostingRequest {
     private String creditAccountId;
     private long amountMinor;
     private LocalDate valueDate;
+    private LocalDate settlementDate;
     private String narrative;
 
     public PostingRequest(String clientReference, String debitAccountId, String creditAccountId,
-                          long amountMinor, LocalDate valueDate, String narrative) {
+                          long amountMinor, LocalDate valueDate, LocalDate settlementDate,
+                          String narrative) {
         this.clientReference = clientReference;
         this.debitAccountId = debitAccountId;
         this.creditAccountId = creditAccountId;
         this.amountMinor = amountMinor;
         this.valueDate = valueDate;
+        this.settlementDate = settlementDate;
         this.narrative = narrative;
     }
 
@@ -43,6 +46,10 @@ public class PostingRequest {
 
     public LocalDate getValueDate() {
         return valueDate;
+    }
+
+    public LocalDate getSettlementDate() {
+        return settlementDate;
     }
 
     public String getNarrative() {

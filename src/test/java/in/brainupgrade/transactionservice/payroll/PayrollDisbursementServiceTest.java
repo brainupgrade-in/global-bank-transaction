@@ -3,7 +3,9 @@ package in.brainupgrade.transactionservice.payroll;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import in.brainupgrade.transactionservice.payroll.client.PostingClient;
@@ -54,5 +56,16 @@ class PayrollDisbursementServiceTest {
 
         assertThat(result.getAccepted()).isZero();
         assertThat(result.getRejectedReferences()).containsExactly("BATCH-9-E1");
+    }
+
+    @Test
+    void sendsTheSettlementDateOnEachPosting() {
+        when(postingClient.resolveSettlementDate(any())).thenReturn(LocalDate.of(2026, 3, 27));
+        when(postingClient.post(any(PostingRequest.class))).thenReturn(new PostingResponse());
+
+        service.disburse("BATCH-9", List.of(item("E1", "ACC-CLIENT-001", 1000L)),
+                LocalDate.of(2026, 3, 25));
+
+        verify(postingClient).post(argThat(r -> LocalDate.of(2026, 3, 27).equals(r.getSettlementDate())));
     }
 }
